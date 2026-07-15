@@ -1,9 +1,10 @@
 mod framebuffer;
 mod line;
+mod polygon;
 
 use raylib::prelude::*;
 use framebuffer::Framebuffer;
-use line::line;
+use polygon::draw_polygon;
 
 fn main() {
     let width = 800;
@@ -13,22 +14,21 @@ fn main() {
     framebuffer.set_background_color(Color::BLACK);
     framebuffer.clear();
 
-    framebuffer.set_current_color(Color::GREEN);
-    line(
-        &mut framebuffer,
-        Vector2::new(50.0, 50.0),
-        Vector2::new(350.0, 350.0),
-    );
-
     framebuffer.set_current_color(Color::RED);
-    line(
-        &mut framebuffer,
-        Vector2::new(350.0, 50.0),
-        Vector2::new(50.0, 350.0),
-    );
 
-    let output_file = "lines.png";
+    let hexagon = vec![
+        Vector2::new(300.0, 100.0),
+        Vector2::new(400.0, 150.0),
+        Vector2::new(400.0, 250.0),
+        Vector2::new(300.0, 300.0),
+        Vector2::new(200.0, 250.0),
+        Vector2::new(200.0, 150.0),
+    ];
+
+    draw_polygon(&mut framebuffer, &hexagon);
+
+    let output_file = "polygon.png";
     framebuffer.render_to_file(output_file);
 
-    println!("Líneas guardadas exitosamente!");
+    println!("Polígono guardado exitosamente!");
 }
