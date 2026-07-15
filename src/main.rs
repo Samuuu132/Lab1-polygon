@@ -1,27 +1,18 @@
+mod framebuffer;
+
 use raylib::prelude::*;
+use framebuffer::Framebuffer;
 
 fn main() {
-    let image_width = 500;
-    let image_height = 500;
+    let mut framebuffer = Framebuffer::new(800, 600, Color::BLACK);
 
-    let mut new_image = Image::gen_image_color(
-        image_width,
-        image_height,
-        Color::BLACK
-    );
+    framebuffer.set_background_color(Color::BLACK);
+    framebuffer.clear();
 
-    let pixel_position_x = 100;
-    let pixel_position_y = 100;
+    framebuffer.set_current_color(Color::WHITE);
+    framebuffer.set_pixel(400, 300);
 
-    new_image.draw_pixel(
-        pixel_position_x,
-        pixel_position_y,
-        Color::WHITE
-    );
+    framebuffer.render_to_file("framebuffer_test.png");
 
-    let output_file_name = "my_first_image.png";
-
-    new_image.export_image(output_file_name);
-
-    println!("Image saved successfully as '{}'!", output_file_name);
+    println!("Framebuffer guardado exitosamente!");
 }
