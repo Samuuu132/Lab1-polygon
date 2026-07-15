@@ -1,18 +1,34 @@
 mod framebuffer;
+mod line;
 
 use raylib::prelude::*;
 use framebuffer::Framebuffer;
+use line::line;
 
 fn main() {
-    let mut framebuffer = Framebuffer::new(800, 600, Color::BLACK);
+    let width = 800;
+    let height = 600;
+    let mut framebuffer = Framebuffer::new(width, height, Color::BLACK);
 
     framebuffer.set_background_color(Color::BLACK);
     framebuffer.clear();
 
-    framebuffer.set_current_color(Color::WHITE);
-    framebuffer.set_pixel(400, 300);
+    framebuffer.set_current_color(Color::GREEN);
+    line(
+        &mut framebuffer,
+        Vector2::new(50.0, 50.0),
+        Vector2::new(350.0, 350.0),
+    );
 
-    framebuffer.render_to_file("framebuffer_test.png");
+    framebuffer.set_current_color(Color::RED);
+    line(
+        &mut framebuffer,
+        Vector2::new(350.0, 50.0),
+        Vector2::new(50.0, 350.0),
+    );
 
-    println!("Framebuffer guardado exitosamente!");
+    let output_file = "lines.png";
+    framebuffer.render_to_file(output_file);
+
+    println!("Líneas guardadas exitosamente!");
 }
