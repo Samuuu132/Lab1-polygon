@@ -18,7 +18,9 @@ pub fn line(
     let mut err = dx + dy;
 
     loop {
-        framebuffer.set_pixel(x0 as u32, y0 as u32);
+        if x0 >= 0 && y0 >= 0 {
+            framebuffer.set_pixel(x0 as u32, y0 as u32);
+        }
 
         if x0 == x1 && y0 == y1 {
             break;

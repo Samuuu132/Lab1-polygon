@@ -46,4 +46,51 @@ impl Framebuffer {
     pub fn render_to_file(&self, file_path: &str) {
         self.color_buffer.export_image(file_path);
     }
+
+    pub fn render_to_file_bmp(&self, file_path: &str) {
+        use std::fs::File;
+        use std::io::Write;
+
+        let width = self.width as i32;
+        let height = self.height as i32;
+
+        let row_size = (width * 3 + 3) & !3;
+        let padding = row_size - width * 3;
+        let pixel_data_size = row_size * height;
+        let file_size = 54 + pixel_data_size;
+
+        let mut buffer: Vec<u8> = Vec::with_capacity(file_size as usize);
+
+        buffer.extend_from_slice(b"BM");
+        buffer.extend_from_slice(&(file_size as u32).to_le_bytes());
+        buffer.extend_from_slice(&0u32.to_le_bytes());
+        buffer.extend_from_slice(&54u32.to_le_bytes());
+
+        buffer.extend_from_slice(&40u32.to_le_bytes());
+        buffer.extend_from_slice(&width.to_le_bytes());
+        buffer.extend_from_slice(&height.to_le_bytes());
+        buffer.extend_from_slice(&1u16.to_le_bytes());
+        buffer.extend_from_slice(&24u16.to_le_bytes());
+        buffer.extend_from_slice(&0u32.to_le_bytes());
+        buffer.extend_from_slice(&(pixel_data_size as u32).to_le_bytes());
+        buffer.extend_from_slice(&2835u32.to_le_bytes());
+        buffer.extend_from_slice(&2835u32.to_le_bytes());
+        buffer.extend_from_slice(&0u32.to_le_bytes());
+        buffer.extend_from_slice(&0u32.to_le_bytes());
+
+        for y in (0..height).rev() {
+            for x in 0..width {
+                let color = self.color_buffer.get_color(x, y);
+                buffer.push(color.b);
+                buffer.push(color.g);
+                buffer.push(color.r);
+            }
+            for _ in 0..padding {
+                buffer.push(0);
+            }
+        }
+
+        let mut file = File::create(file_path).expect("No se pudo crear el archivo BMP");
+        file.write_all(&buffer).expect("No se pudo escribir el archivo BMP");
+    }
 }
